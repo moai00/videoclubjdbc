@@ -3,7 +3,6 @@
  */
 package dao;
 
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -19,35 +18,36 @@ import modelo.Pelicula;
 public class PeliculaJDBC {
 
     private Connection conexion;
-    
+
     //funncion que inserta una pelicula en la bbdd
-    
-    public boolean insertarPelicula(Pelicula pelicula){
+    public boolean insertarPelicula(Pelicula pelicula) {
         conectar();
-        if (conexion != null){
+        if (conexion != null) {
             try {
-            String insert="insert into pelicula values (?,?,?,?,?,?)";
-            PreparedStatement ps = conexion.prepareStatement(insert);
-            ps.setString(1, pelicula.getCodigo());
-            ps.setString(2, pelicula.getTitulo());
-            ps.setInt(3, pelicula.getDuracion());
-            ps.setString(4, pelicula.getGenero());
-            ps.setInt(5, pelicula.getValoracion());
-            ps.setBoolean(6, pelicula.isVisto());
-            
-            //ejecutar la consulta APPLY
-            ps.executeUpdate();
-            //liberamos recursos
-            ps.close();
-            return true;
-            }catch(SQLException ex){
+                String insert = "insert into pelicula values (?,?,?,?,?,?)";
+                PreparedStatement ps = conexion.prepareStatement(insert);
+                ps.setString(1, pelicula.getCodigo());
+                ps.setString(2, pelicula.getTitulo());
+                ps.setInt(3, pelicula.getDuracion());
+                ps.setString(4, pelicula.getGenero());
+                ps.setInt(5, pelicula.getValoracion());
+                ps.setBoolean(6, pelicula.isVisto());
+
+                //ejecutar la consulta APPLY
+                ps.executeUpdate();
+                //liberamos recursos
+                ps.close();
+                return true;
+            } catch (SQLException ex) {
                 System.out.println("Error al insertar " + ex.getMessage());
                 return false;
+            } finally {
+                desconectar();
             }
-        }else{
+        } else {
             return false;
         }
-        
+
     }
 
     //función para establecer la conexión con el servidor
