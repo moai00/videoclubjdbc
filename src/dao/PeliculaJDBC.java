@@ -6,7 +6,9 @@ package dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import modelo.Pelicula;
@@ -18,6 +20,35 @@ import modelo.Pelicula;
 public class PeliculaJDBC {
 
     private Connection conexion;
+
+    //funcion que comprueba si un codigo de pelicula ya existe en la bbdd
+    public boolean existePelicula(String codigo) {
+        conectar();
+        if (conexion != null) {
+            try {
+                String query = "select * from pelicula where codigo='" + codigo + "'";
+                Statement st = conexion.createStatement();
+                ResultSet rs = st.executeQuery(query);
+                boolean existe = false;
+                if (rs.next()) {
+                    existe = true;
+                }
+                rs.close();
+                st.close();
+                return existe;
+
+            } catch (SQLException ex) {
+                System.out.println("Error al consultar " + ex.getMessage());
+                return false;
+            } finally {
+                desconectar();
+            }
+
+        } else {
+            return false;
+        }
+
+    }
 
     //funncion que inserta una pelicula en la bbdd
     public boolean insertarPelicula(Pelicula pelicula) {

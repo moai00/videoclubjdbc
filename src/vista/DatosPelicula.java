@@ -5,6 +5,7 @@
  */
 package vista;
 
+import dao.PeliculaJDBC;
 import javax.swing.JOptionPane;
 import modelo.Pelicula;
 
@@ -22,13 +23,18 @@ public class DatosPelicula extends javax.swing.JDialog {
 
     public void setPelicula(Pelicula pelicula) {
         this.pelicula = pelicula;
+
     }
+
+    private PeliculaJDBC peliculaJDBC;
 
     /**
      * Creates new form DatosPelicula
      */
     public DatosPelicula(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        //inicializamos nuestro objeto
+        peliculaJDBC = new PeliculaJDBC();
         pelicula = new Pelicula();
         initComponents();
     }
@@ -188,8 +194,14 @@ public class DatosPelicula extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (comprobarCampos()){
+        if (comprobarCampos()) {
             //campos correctos: damos de alta la peli en la BBDD
+
+            if (peliculaJDBC.insertarPelicula(pelicula)) {
+                JOptionPane.showMessageDialog(this, "Pelicula dada de alta");
+            } else {
+                JOptionPane.showMessageDialog(this, "No se ha podido insertar la pelicula", "ERROR: Pelicula no dada de alta", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -203,7 +215,13 @@ public class DatosPelicula extends javax.swing.JDialog {
             return false;
         }
         //verificamos si ya existe una pelicula con ese codigo con una consulta en la BBDD
+        if (peliculaJDBC.existePelicula(jTextField1.getText())){
+            JOptionPane.showMessageDialog(this, "Ya existe una pelicula con ese codigo", 
+                    "ERROR: codigo duplicado", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
 
+        
         if (jTextField2.getText().isEmpty() || jTextField2.getText().length() > 100) {
             JOptionPane.showMessageDialog(this, "El titulo no puede estar en blanco ni tener más de 100 carácteres.",
                     "Error: título incorrecto", JOptionPane.ERROR_MESSAGE);
